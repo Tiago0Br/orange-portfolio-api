@@ -6,6 +6,8 @@ use Slim\Container;
 
 $container = new Container();
 
+require __DIR__ . '/connection.php';
+
 $modules = require __DIR__ . '/../modules.php';
 foreach ($modules as $module) {
     require_once sprintf(__DIR__ . '/../../modules/%s/container/container.php', $module);
