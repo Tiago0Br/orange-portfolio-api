@@ -27,6 +27,7 @@ class User
     private string $password;
 
     #[ORM\Column(name: 'selfie_id', type: Types::INTEGER)]
+    #[ORM\JoinColumn(name: 'images', referencedColumnName: 'id')]
     private ?int $selfieId;
 
     public function jsonSerialize(): array

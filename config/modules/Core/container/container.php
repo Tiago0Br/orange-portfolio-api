@@ -10,7 +10,7 @@ $container[RegisterUser::class] = static fn (ContainerInterface $container) => n
     $container->get(UserRepositoryInterface::class),
 );
 
-// Doctrine
+// Repositories
 $container[UserRepositoryInterface::class] = static fn (ContainerInterface $container) => new UserRepositoryDoctrineOrm(
     $container->get('doctrine-orange')
 );
