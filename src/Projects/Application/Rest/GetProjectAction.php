@@ -3,8 +3,8 @@
 namespace OrangePortfolio\Projects\Application\Rest;
 
 use JsonException;
-use OrangePortfolio\Projects\Domain\Dto\CreateProjectDto;
-use OrangePortfolio\Projects\Domain\Service\CreateProject;
+use OrangePortfolio\Projects\Domain\Dto\GetProjectDto;
+use OrangePortfolio\Projects\Domain\Repository\ProjectRepositoryInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -12,7 +12,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Http\StatusCode;
 
-class CreateProjectAction
+class GetProjectAction
 {
     public function __construct(private readonly ContainerInterface $container)
     {
@@ -23,22 +23,19 @@ class CreateProjectAction
      * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
      */
-    public function __invoke(Request $request, Response $response, array $args): Response
+    public function __invoke(Request $request, Response $response, $args): Response
     {
-        $createProjectDto = CreateProjectDto::fromArray(
-            array_merge($args, (array) $request->getParsedBody())
-        );
+        $getProjectDto = GetProjectDto::fromArray($args);
+
+        /** @var ProjectRepositoryInterface $projectRepository */
+        $projectRepository = $this->container->get(ProjectRepositoryInterface::class);
+        $project = $projectRepository->getById($getProjectDto->projectId);
 
         $body = $response->getBody();
-
-        /** @var CreateProject $createProject */
-        $createProject = $this->container->get(CreateProject::class);
-        $project = $createProject->save($createProjectDto);
-
         $body->write((string) json_encode($project->jsonSerialize(), JSON_THROW_ON_ERROR));
 
         return $response
-            ->withStatus(StatusCode::HTTP_CREATED)
+            ->withStatus(StatusCode::HTTP_OK)
             ->withHeader('Content-Type', 'application/json')
             ->withBody($body);
     }

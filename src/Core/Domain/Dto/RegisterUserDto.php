@@ -2,7 +2,7 @@
 
 namespace OrangePortfolio\Core\Domain\Dto;
 
-use Assert\Assert;
+use OrangePortfolio\Core\Domain\Helpers\ValidateParams;
 
 class RegisterUserDto
 {
@@ -28,17 +28,15 @@ class RegisterUserDto
 
     private static function validate(array $params): void
     {
-        array_map(static function ($key) use ($params) {
-            Assert::that($params[$key])
-                ->notNull("O campo '$key' é obrigatório")
-                ->notEmpty("O campo '$key' não pode estar vazio")
-                ->string("O campo '$key' deve ser uma string");
-        }, ['name', 'email', 'password']);
+        ValidateParams::validateString(
+            params: $params,
+            fields: ['name', 'email', 'password'],
+        );
 
-        if (isset($params['selfie_id'])) {
-            Assert::that($params['selfie_id'])
-                ->notEmpty("O campo 'selfie_id' não pode estar vazio")
-                ->integerish("O campo 'selfie_id' deve ser um  número");
-        }
+        ValidateParams::validateInteger(
+            params: $params,
+            fields: ['selfie_id'],
+            required: false
+        );
     }
 }

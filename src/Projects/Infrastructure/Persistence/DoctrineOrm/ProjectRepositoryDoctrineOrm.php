@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Exception\ORMException;
 use Doctrine\ORM\OptimisticLockException;
 use OrangePortfolio\Projects\Domain\Entity\Project;
+use OrangePortfolio\Projects\Domain\Exception\ProjectNotFoundException;
 use OrangePortfolio\Projects\Domain\Repository\ProjectRepositoryInterface;
 
 class ProjectRepositoryDoctrineOrm implements ProjectRepositoryInterface
@@ -24,5 +25,16 @@ class ProjectRepositoryDoctrineOrm implements ProjectRepositoryInterface
         } catch (ORMException | OptimisticLockException $e) {
             echo $e->getMessage();
         }
+    }
+
+    public function getById(int $id): Project
+    {
+        $project = $this->entityManager->find(Project::class, $id);
+
+        if ($project instanceof Project) {
+            return $project;
+        }
+
+        throw ProjectNotFoundException::fromId($id);
     }
 }

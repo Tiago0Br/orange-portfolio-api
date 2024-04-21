@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace OrangePortfolio\Projects\Domain\Dto;
 
-use Assert\Assert;
+use OrangePortfolio\Core\Domain\Helpers\ValidateParams;
 
 class CreateProjectDto
 {
@@ -32,17 +32,14 @@ class CreateProjectDto
 
     private static function validate(array $params): void
     {
-        array_map(static function ($key) use ($params) {
-            Assert::that($params[$key])
-                ->notNull("O campo '$key' é obrigatório")
-                ->string("O campo '$key' deve ser uma string")
-                ->notEmpty("O campo '$key' não pode estar vazio");
-        }, ['title', 'description', 'link']);
+        ValidateParams::validateString(
+            params: $params,
+            fields: ['title', 'description', 'link'],
+        );
 
-        array_map(static function ($key) use ($params) {
-            Assert::that($params[$key])
-                ->notNull("O campo '$key' é obrigatório")
-                ->integerish("O campo '$key' deve ser um número");
-        }, ['image_id', 'user_id']);
+        ValidateParams::validateInteger(
+            params: $params,
+            fields: ['image_id', 'user_id'],
+        );
     }
 }
