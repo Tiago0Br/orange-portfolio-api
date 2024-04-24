@@ -12,10 +12,10 @@ class GetProjectDto
 
     public static function fromArray(array $params): self
     {
-        ValidateParams::validateInteger($params, ['project_id']);
+        ValidateParams::validateInteger($params, ['id']);
 
         return new self(
-            projectId: (int) $params['project_id']
+            projectId: (int) $params['id']
         );
     }
 }

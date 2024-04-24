@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace OrangePortfolio\Projects\Domain\Service;
 
-use OrangePortfolio\Projects\Domain\Dto\CreateProjectDto;
+use OrangePortfolio\Projects\Domain\Dto\UpdateProjectDto;
 use OrangePortfolio\Projects\Domain\Entity\Project;
 use OrangePortfolio\Projects\Domain\Repository\ProjectRepositoryInterface;
 
-class CreateProject
+class UpdateProject
 {
     public function __construct(private readonly ProjectRepositoryInterface $projectRepository)
     {
     }
 
-    public function save(CreateProjectDto $projectDto): Project
+    public function update(UpdateProjectDto $updateProjectDto): Project
     {
-        $project = Project::create($projectDto);
+        $project = $this->projectRepository->getById($updateProjectDto->id);
+        $project->update($updateProjectDto);
         $this->projectRepository->store($project);
 
         return $project;

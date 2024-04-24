@@ -7,6 +7,7 @@ namespace OrangePortfolio\Projects\Domain\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use OrangePortfolio\Projects\Domain\Dto\CreateProjectDto;
+use OrangePortfolio\Projects\Domain\Dto\UpdateProjectDto;
 
 #[ORM\Table(name: 'projects')]
 #[ORM\Entity]
@@ -57,5 +58,13 @@ class Project
         $project->userId = $projectDto->userId;
 
         return $project;
+    }
+
+    public function update(UpdateProjectDto $projectDto): void
+    {
+        $this->title = $projectDto->title;
+        $this->description = $projectDto->description;
+        $this->link = $projectDto->link;
+        $this->imageId = $projectDto->imageId;
     }
 }

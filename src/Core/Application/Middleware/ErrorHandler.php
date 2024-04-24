@@ -8,6 +8,7 @@ use OrangePortfolio\Core\Domain\Exception\NotFoundException;
 use PDOException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Throwable;
 
 class ErrorHandler
 {
@@ -35,6 +36,13 @@ class ErrorHandler
                 ->withJson([
                     'type'        => 'databaseError',
                     'message'     => 'Erro ao realizar operação no banco de dados',
+                ]);
+        } catch (Throwable $e) {
+            $response = $response
+                ->withStatus(500)
+                ->withJson([
+                    'type'        => 'internalError',
+                    'message'     => $e->getMessage(),
                 ]);
         }
 
