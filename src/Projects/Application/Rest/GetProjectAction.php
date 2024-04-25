@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace OrangePortfolio\Projects\Application\Rest;
 
 use JsonException;

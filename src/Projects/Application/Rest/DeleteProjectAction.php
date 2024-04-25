@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace OrangePortfolio\Projects\Application\Rest;
 
 use JsonException;
-use OrangePortfolio\Projects\Domain\Dto\CreateProjectDto;
-use OrangePortfolio\Projects\Domain\Service\CreateProject;
+use OrangePortfolio\Projects\Domain\Dto\GetProjectDto;
+use OrangePortfolio\Projects\Domain\Service\DeleteProject;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -14,33 +14,34 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Http\StatusCode;
 
-class CreateProjectAction
+class DeleteProjectAction
 {
     public function __construct(private readonly ContainerInterface $container)
     {
     }
 
     /**
-     * @throws JsonException
-     * @throws NotFoundExceptionInterface
      * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     * @throws JsonException
      */
     public function __invoke(Request $request, Response $response, array $args): Response
     {
-        $createProjectDto = CreateProjectDto::fromArray(
-            array_merge($args, (array) $request->getParsedBody())
-        );
+        $deleteProjectDto = GetProjectDto::fromArray($args);
+
+        /** @var DeleteProject $deleteProject */
+        $deleteProject = $this->container->get(DeleteProject::class);
+        $deleteProject->delete($deleteProjectDto->projectId);
 
         $body = $response->getBody();
+        $responseBody = [
+            'message' => 'Projeto deletado com sucesso!'
+        ];
 
-        /** @var CreateProject $createProject */
-        $createProject = $this->container->get(CreateProject::class);
-        $project = $createProject->save($createProjectDto);
-
-        $body->write((string) json_encode($project->jsonSerialize(), JSON_THROW_ON_ERROR));
+        $body->write((string) json_encode($responseBody, JSON_THROW_ON_ERROR));
 
         return $response
-            ->withStatus(StatusCode::HTTP_CREATED)
+            ->withStatus(StatusCode::HTTP_OK)
             ->withHeader('Content-Type', 'application/json')
             ->withBody($body);
     }

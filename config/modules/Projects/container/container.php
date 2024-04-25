@@ -2,6 +2,7 @@
 
 use OrangePortfolio\Projects\Domain\Repository\ProjectRepositoryInterface;
 use OrangePortfolio\Projects\Domain\Service\CreateProject;
+use OrangePortfolio\Projects\Domain\Service\DeleteProject;
 use OrangePortfolio\Projects\Domain\Service\UpdateProject;
 use OrangePortfolio\Projects\Infrastructure\Persistence\DoctrineOrm\ProjectRepositoryDoctrineOrm;
 use Psr\Container\ContainerInterface;
@@ -12,6 +13,10 @@ $container[CreateProject::class] = static fn (ContainerInterface $container) => 
 );
 
 $container[UpdateProject::class] = static fn (ContainerInterface $container) => new UpdateProject(
+    $container->get(ProjectRepositoryInterface::class)
+);
+
+$container[DeleteProject::class] = static fn (ContainerInterface $container) => new DeleteProject(
     $container->get(ProjectRepositoryInterface::class)
 );
 

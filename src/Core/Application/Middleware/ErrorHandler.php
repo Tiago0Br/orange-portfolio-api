@@ -30,12 +30,12 @@ class ErrorHandler
                     'type'        => 'notFound',
                     'message'     => $e->getMessage(),
                 ]);
-        } catch (PDOException | Exception) {
+        } catch (PDOException | Exception $e) {
             $response = $response
                 ->withStatus(500)
                 ->withJson([
                     'type'        => 'databaseError',
-                    'message'     => 'Erro ao realizar operação no banco de dados',
+                    'message'     => 'Erro ao realizar operação no banco de dados: ' . $e->getMessage(),
                 ]);
         } catch (Throwable $e) {
             $response = $response

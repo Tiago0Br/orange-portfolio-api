@@ -37,4 +37,10 @@ class ProjectRepositoryDoctrineOrm implements ProjectRepositoryInterface
 
         throw ProjectNotFoundException::fromId($id);
     }
+
+    public function delete(Project $project): void
+    {
+        $this->entityManager->remove($project);
+        $this->entityManager->flush();
+    }
 }

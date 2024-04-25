@@ -39,7 +39,7 @@ class UpdateProjectAction
         $body->write((string) json_encode($project->jsonSerialize(), JSON_THROW_ON_ERROR));
 
         return $response
-            ->withStatus(StatusCode::HTTP_CREATED)
+            ->withStatus(StatusCode::HTTP_OK)
             ->withHeader('Content-Type', 'application/json')
             ->withBody($body);
     }
