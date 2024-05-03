@@ -16,6 +16,22 @@ class Tag
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     private int $id;
 
-    #[ORM\Column(name: 'id', type: Types::STRING)]
+    #[ORM\Column(name: 'name', type: Types::STRING)]
     private string $name;
+
+    public function jsonSerialize(): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+        ];
+    }
+
+    public static function create(string $name): self
+    {
+        $tag = new self();
+        $tag->name = $name;
+
+        return $tag;
+    }
 }

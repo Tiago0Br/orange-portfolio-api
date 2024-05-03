@@ -1,10 +1,13 @@
 <?php
 
 use OrangePortfolio\Projects\Domain\Repository\ProjectRepositoryInterface;
+use OrangePortfolio\Projects\Domain\Repository\TagRepositoryInterface;
 use OrangePortfolio\Projects\Domain\Service\CreateProject;
+use OrangePortfolio\Projects\Domain\Service\CreateTag;
 use OrangePortfolio\Projects\Domain\Service\DeleteProject;
 use OrangePortfolio\Projects\Domain\Service\UpdateProject;
 use OrangePortfolio\Projects\Infrastructure\Persistence\DoctrineOrm\ProjectRepositoryDoctrineOrm;
+use OrangePortfolio\Projects\Infrastructure\Persistence\DoctrineOrm\TagRepositoryDoctrineOrm;
 use Psr\Container\ContainerInterface;
 
 // Services
@@ -20,7 +23,15 @@ $container[DeleteProject::class] = static fn (ContainerInterface $container) => 
     $container->get(ProjectRepositoryInterface::class)
 );
 
+$container[CreateTag::class] = static fn (ContainerInterface $container) => new CreateTag(
+    $container->get(TagRepositoryInterface::class)
+);
+
 // Repositories
 $container[ProjectRepositoryInterface::class] = static fn (ContainerInterface $container) => new ProjectRepositoryDoctrineOrm(
+    $container->get('doctrine-orange')
+);
+
+$container[TagRepositoryInterface::class] = static fn (ContainerInterface $container) => new TagRepositoryDoctrineOrm(
     $container->get('doctrine-orange')
 );

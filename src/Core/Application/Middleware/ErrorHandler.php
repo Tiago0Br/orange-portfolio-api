@@ -3,6 +3,7 @@
 namespace OrangePortfolio\Core\Application\Middleware;
 
 use Doctrine\DBAL\Exception;
+use DomainException;
 use InvalidArgumentException;
 use OrangePortfolio\Core\Domain\Exception\NotFoundException;
 use PDOException;
@@ -21,27 +22,34 @@ class ErrorHandler
                 ->withStatus(400)
                 ->withJson([
                     'type'        => 'InvalidParameter',
-                    'messages'    => [$e->getMessage()],
+                    'messages'    => $e->getMessage(),
                 ]);
         } catch (NotFoundException $e) {
             $response = $response
                 ->withStatus(404)
                 ->withJson([
-                    'type'        => 'notFound',
+                    'type'        => 'NotFound',
                     'message'     => $e->getMessage(),
                 ]);
-        } catch (PDOException | Exception $e) {
+        } catch (DomainException $e) {
+            $response = $response
+                ->withStatus(409)
+                ->withJson([
+                    'type'        => 'BusinessLogic',
+                    'message'     => $e->getMessage(),
+                ]);
+        }  catch (PDOException | Exception $e) {
             $response = $response
                 ->withStatus(500)
                 ->withJson([
-                    'type'        => 'databaseError',
+                    'type'        => 'DatabaseError',
                     'message'     => 'Erro ao realizar operação no banco de dados: ' . $e->getMessage(),
                 ]);
         } catch (Throwable $e) {
             $response = $response
                 ->withStatus(500)
                 ->withJson([
-                    'type'        => 'internalError',
+                    'type'        => 'InternalServerError',
                     'message'     => $e->getMessage(),
                 ]);
         }
