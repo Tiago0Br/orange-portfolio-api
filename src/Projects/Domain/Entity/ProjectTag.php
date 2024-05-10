@@ -23,4 +23,18 @@ class ProjectTag
     #[ORM\ManyToOne(targetEntity: Tag::class)]
     #[ORM\JoinColumn(name: 'tag_id', referencedColumnName: 'id')]
     private Tag $tag;
+
+    public static function create(Project $project, Tag $tag): self
+    {
+        $instance = new self();
+        $instance->project = $project;
+        $instance->tag = $tag;
+
+        return $instance;
+    }
+
+    public function getTag(): Tag
+    {
+        return $this->tag;
+    }
 }

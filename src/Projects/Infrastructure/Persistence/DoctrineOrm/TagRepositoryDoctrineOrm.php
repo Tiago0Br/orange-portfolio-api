@@ -25,4 +25,9 @@ class TagRepositoryDoctrineOrm implements TagRepositoryInterface
     {
         return $this->entityManager->getRepository(Tag::class)->findOneBy(['name' => $name]);
     }
+
+    public function getById(int $id): Tag
+    {
+        return $this->entityManager->getRepository(Tag::class)->find($id);
+    }
 }

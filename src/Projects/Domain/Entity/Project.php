@@ -37,21 +37,31 @@ class Project
     #[ORM\JoinColumn(name: 'users', referencedColumnName: 'id')]
     private int $userId;
 
-    #[ORM\OneToMany(targetEntity: ProjectTag::class, mappedBy: 'tag', cascade: ['persist'], orphanRemoval: true)]
-    private Collection $tags;
+    #[ORM\OneToMany(
+        targetEntity: ProjectTag::class,
+        mappedBy: 'project',
+        cascade: ['persist'],
+        orphanRemoval: true
+    )]
+    private Collection $projectTag;
 
     public function __construct()
     {
-        $this->tags = new ArrayCollection();
+        $this->projectTag = new ArrayCollection();
     }
 
     public function jsonSerialize(): array
     {
+        $tags = array_map(
+            static fn(ProjectTag $projectTag) => $projectTag->getTag()->jsonSerialize(),
+            $this->projectTag->toArray()
+        );
+
         return [
             'id' => $this->id,
             'title' => $this->title,
             'description' => $this->description,
-            'tags' => $this->tags->toArray(),
+            'tags' => $tags,
             'link' => $this->link,
             'image_id' => $this->imageId,
             'user_id' => $this->userId,
@@ -69,6 +79,15 @@ class Project
         $project->userId = $projectDto->userId;
 
         return $project;
+    }
+
+    /** @param Tag[] $tags */
+    public function addTags(array $tags): void
+    {
+        $this->projectTag->clear();
+        foreach ($tags as $tag) {
+            $this->projectTag->add(ProjectTag::create($this, $tag));
+        }
     }
 
     public function update(UpdateProjectDto $projectDto): void

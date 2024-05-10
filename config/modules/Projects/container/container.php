@@ -12,11 +12,13 @@ use Psr\Container\ContainerInterface;
 
 // Services
 $container[CreateProject::class] = static fn (ContainerInterface $container) => new CreateProject(
-    $container->get(ProjectRepositoryInterface::class)
+    $container->get(ProjectRepositoryInterface::class),
+    $container->get(TagRepositoryInterface::class),
 );
 
 $container[UpdateProject::class] = static fn (ContainerInterface $container) => new UpdateProject(
-    $container->get(ProjectRepositoryInterface::class)
+    $container->get(ProjectRepositoryInterface::class),
+    $container->get(TagRepositoryInterface::class),
 );
 
 $container[DeleteProject::class] = static fn (ContainerInterface $container) => new DeleteProject(

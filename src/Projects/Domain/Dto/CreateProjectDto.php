@@ -14,6 +14,7 @@ class CreateProjectDto
         public readonly string $link,
         public readonly int $imageId,
         public readonly int $userId,
+        public readonly array $tags
     ) {
     }
 
@@ -27,6 +28,7 @@ class CreateProjectDto
             link: $params['link'],
             imageId: (int) $params['image_id'],
             userId: (int) $params['user_id'],
+            tags: array_map(fn ($tag) => (int) $tag, $params['tags'])
         );
     }
 
@@ -40,6 +42,11 @@ class CreateProjectDto
         ValidateParams::validateInteger(
             params: $params,
             fields: ['image_id', 'user_id'],
+        );
+
+        ValidateParams::validateIntegerArray(
+            params: $params,
+            fields: ['tags'],
         );
     }
 }

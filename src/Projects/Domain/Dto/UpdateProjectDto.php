@@ -11,7 +11,8 @@ class UpdateProjectDto
         public readonly string $title,
         public readonly string $description,
         public readonly string $link,
-        public readonly int $imageId
+        public readonly int $imageId,
+        public readonly array $tags
     ) {
     }
 
@@ -24,7 +25,8 @@ class UpdateProjectDto
             title: $params['title'],
             description: $params['description'],
             link: $params['link'],
-            imageId: (int) $params['image_id']
+            imageId: (int) $params['image_id'],
+            tags: array_map(fn ($tag) => (int) $tag, $params['tags'])
         );
     }
 
@@ -38,6 +40,11 @@ class UpdateProjectDto
         ValidateParams::validateString(
             params: $params,
             fields: ['title', 'description', 'link']
+        );
+
+        ValidateParams::validateIntegerArray(
+            params: $params,
+            fields: ['tags'],
         );
     }
 }

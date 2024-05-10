@@ -11,4 +11,6 @@ interface TagRepositoryInterface
     public function store(Tag $tag): void;
 
     public function exists(string $name): Tag | null;
+
+    public function getById(int $id): Tag;
 }
