@@ -10,6 +10,8 @@ interface ProjectRepositoryInterface
 {
     public function store(Project $project): void;
 
+    public function getAllByTags(?string $tags): array;
+
     public function getById(int $id): Project;
 
     public function delete(Project $project): void;

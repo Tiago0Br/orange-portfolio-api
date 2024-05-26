@@ -4,7 +4,7 @@ namespace OrangePortfolio\Projects\Domain\Dto;
 
 use OrangePortfolio\Core\Domain\Helpers\ValidateParams;
 
-class GetProjectDto
+class GetProjectByIdDto
 {
     private function __construct(public readonly int $projectId)
     {

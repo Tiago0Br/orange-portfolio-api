@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace OrangePortfolio\Projects\Application\Rest;
 
 use JsonException;
-use OrangePortfolio\Projects\Domain\Dto\GetProjectByIdDto;
-use OrangePortfolio\Projects\Domain\Service\DeleteProject;
+use OrangePortfolio\Projects\Domain\Dto\GetProjectsDto;
+use OrangePortfolio\Projects\Domain\Entity\Project;
+use OrangePortfolio\Projects\Domain\Entity\ProjectTag;
+use OrangePortfolio\Projects\Domain\Repository\ProjectRepositoryInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
@@ -14,7 +16,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Http\StatusCode;
 
-class DeleteProjectAction
+class GetProjectsAction
 {
     public function __construct(private readonly ContainerInterface $container)
     {
@@ -25,19 +27,16 @@ class DeleteProjectAction
      * @throws NotFoundExceptionInterface
      * @throws JsonException
      */
-    public function __invoke(Request $request, Response $response, array $args): Response
+    public function __invoke(Request $request, Response $response): Response
     {
-        $deleteProjectDto = GetProjectByIdDto::fromArray($args);
+        $getProjectsDto = GetProjectsDto::fromArray($request->getQueryParams());
 
-        /** @var DeleteProject $deleteProject */
-        $deleteProject = $this->container->get(DeleteProject::class);
-        $deleteProject->delete($deleteProjectDto->projectId);
+        /** @var ProjectRepositoryInterface $projectRepository */
+        $projectRepository = $this->container->get(ProjectRepositoryInterface::class);
+        $projects = $projectRepository->getAllByTags($getProjectsDto->tags);
 
         $body = $response->getBody();
-        $responseBody = [
-            'message' => 'Projeto deletado com sucesso!'
-        ];
-
+        $responseBody = array_map(fn (Project $project) => $project->jsonSerialize(), $projects);
         $body->write((string) json_encode($responseBody, JSON_THROW_ON_ERROR));
 
         return $response

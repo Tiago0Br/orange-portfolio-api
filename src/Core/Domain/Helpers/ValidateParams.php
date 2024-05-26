@@ -5,6 +5,8 @@ namespace OrangePortfolio\Core\Domain\Helpers;
 use Assert\Assert;
 class ValidateParams
 {
+    public const string NUMBERS_SEPARATED_BY_COMMA = '/^[0-9,]+$/';
+
     public static function validateString(array $params, array $fields, bool $required=true): void
     {
         array_map(static function ($key) use ($params, $required) {
@@ -52,6 +54,23 @@ class ValidateParams
                 Assert::that($value)
                     ->integerish("O campo '$key' deve ser um array de inteiros");
             }, $array);
+        }, $fields);
+    }
+
+    public static function validateNumbersSeparatedByComma(array $params, array $fields, bool $required=true): void
+    {
+        array_map(static function ($key) use ($params, $required) {
+            if ($required) {
+                Assert::that($params[$key])
+                    ->notNull("O campo '$key' é obrigatório");
+            }
+
+            if (! $required && ! isset($params[$key])) return;
+            Assert::that($params[$key])
+                ->regex(
+                    self::NUMBERS_SEPARATED_BY_COMMA,
+                    "O campo '$key' deve ser uma lista de inteiros separados por vírgula"
+                );
         }, $fields);
     }
 }
