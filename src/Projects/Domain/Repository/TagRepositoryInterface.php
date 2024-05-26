@@ -13,4 +13,6 @@ interface TagRepositoryInterface
     public function exists(string $name): Tag | null;
 
     public function getById(int $id): Tag;
+
+    public function getAll(): array;
 }

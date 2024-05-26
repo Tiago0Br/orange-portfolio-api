@@ -30,4 +30,9 @@ class TagRepositoryDoctrineOrm implements TagRepositoryInterface
     {
         return $this->entityManager->getRepository(Tag::class)->find($id);
     }
+
+    public function getAll(): array
+    {
+        return $this->entityManager->getRepository(Tag::class)->findBy([], ['name' => 'ASC']);
+    }
 }

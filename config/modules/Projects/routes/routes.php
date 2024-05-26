@@ -5,6 +5,7 @@ declare(strict_types=1);
 use OrangePortfolio\Projects\Application\Rest\CreateProjectAction;
 use OrangePortfolio\Projects\Application\Rest\CreateTagAction;
 use OrangePortfolio\Projects\Application\Rest\DeleteProjectAction;
+use OrangePortfolio\Projects\Application\Rest\GetAllTagsAction;
 use OrangePortfolio\Projects\Application\Rest\GetProjectByIdAction;
 use OrangePortfolio\Projects\Application\Rest\GetProjectsAction;
 use OrangePortfolio\Projects\Application\Rest\UpdateProjectAction;
@@ -25,4 +26,7 @@ $app->group('/projects', function (App $app) use ($container) {
     });
 });
 
-$app->post('/tags', new CreateTagAction($container));
+$app->group('/tags', function (App $app) use ($container) {
+    $app->post('', new CreateTagAction($container));
+    $app->get('', new GetAllTagsAction($container));
+});
