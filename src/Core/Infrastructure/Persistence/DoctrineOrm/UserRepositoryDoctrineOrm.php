@@ -23,4 +23,9 @@ class UserRepositoryDoctrineOrm implements UserRepositoryInterface
             echo $e->getMessage();
         }
     }
+
+    public function getByEmail(string $email): ?User
+    {
+        return $this->entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
+    }
 }

@@ -6,6 +6,7 @@ use Doctrine\DBAL\Exception;
 use DomainException;
 use InvalidArgumentException;
 use OrangePortfolio\Core\Domain\Exception\NotFoundException;
+use OrangePortfolio\Core\Domain\Exception\UnauthorizedException;
 use PDOException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -17,6 +18,13 @@ class ErrorHandler
     {
         try {
             $response = $next($request, $response);
+        } catch (UnauthorizedException $e) {
+            $response = $response
+                ->withStatus(401)
+                ->withJson([
+                    'type'        => 'Unauthorized',
+                    'messages'    => $e->getMessage(),
+                ]);
         } catch (InvalidArgumentException $e) {
             $response = $response
                 ->withStatus(400)

@@ -30,6 +30,16 @@ class User
     #[ORM\JoinColumn(name: 'images', referencedColumnName: 'id')]
     private ?int $selfieId;
 
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function validatePassword(string $password): bool
+    {
+        return password_verify($password, $this->password);
+    }
+
     public function jsonSerialize(): array
     {
         return [
@@ -45,7 +55,7 @@ class User
         $user = new self();
         $user->name = $userDto->name;
         $user->email = $userDto->email;
-        $user->password = $userDto->password;
+        $user->password = password_hash($userDto->password, PASSWORD_BCRYPT);
         $user->selfieId = $userDto->selfieId;
 
         return $user;
