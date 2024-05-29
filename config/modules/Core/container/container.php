@@ -4,9 +4,11 @@ use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Signer\Hmac\Sha256;
 use Lcobucci\JWT\Signer\Key\InMemory;
 use OrangePortfolio\Core\Application\Auth\Authentication;
+use OrangePortfolio\Core\Domain\Repository\ImageRepositoryInterface;
 use OrangePortfolio\Core\Domain\Repository\UserRepositoryInterface;
 use OrangePortfolio\Core\Domain\Service\LoginService;
 use OrangePortfolio\Core\Domain\Service\RegisterUser;
+use OrangePortfolio\Core\Infrastructure\Persistence\DoctrineOrm\ImageRepositoryDoctrineOrm;
 use OrangePortfolio\Core\Infrastructure\Persistence\DoctrineOrm\UserRepositoryDoctrineOrm;
 use Psr\Container\ContainerInterface;
 
@@ -22,7 +24,8 @@ $container[Authentication::class] = static fn (ContainerInterface $container) =>
 // Services
 $container[RegisterUser::class] = static fn (ContainerInterface $container) =>
     new RegisterUser(
-        $container->get(UserRepositoryInterface::class)
+        $container->get(UserRepositoryInterface::class),
+        $container->get(ImageRepositoryInterface::class)
     );
 
 $container[LoginService::class] = static fn (ContainerInterface $container) =>
@@ -33,5 +36,10 @@ $container[LoginService::class] = static fn (ContainerInterface $container) =>
 // Repositories
 $container[UserRepositoryInterface::class] = static fn (ContainerInterface $container) =>
     new UserRepositoryDoctrineOrm(
+        $container->get('doctrine-orange')
+    );
+
+$container[ImageRepositoryInterface::class] = static fn (ContainerInterface $container) =>
+    new ImageRepositoryDoctrineOrm(
         $container->get('doctrine-orange')
     );

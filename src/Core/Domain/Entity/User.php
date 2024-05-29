@@ -26,9 +26,9 @@ class User
     #[ORM\Column(name: 'password', type: Types::STRING)]
     private string $password;
 
-    #[ORM\Column(name: 'selfie_id', type: Types::INTEGER)]
-    #[ORM\JoinColumn(name: 'images', referencedColumnName: 'id')]
-    private ?int $selfieId;
+    #[ORM\OneToOne(targetEntity: Image::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'selfie_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    private Image $selfie;
 
     public function getId(): int
     {
@@ -46,17 +46,19 @@ class User
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
-            'selfie_id' => $this->selfieId,
+            'selfie' => $this->selfie->jsonSerialize(),
         ];
     }
 
-    public static function create(RegisterUserDto $userDto): self
-    {
+    public static function create(
+        RegisterUserDto $userDto,
+        Image $selfie
+    ): self {
         $user = new self();
         $user->name = $userDto->name;
         $user->email = $userDto->email;
         $user->password = password_hash($userDto->password, PASSWORD_BCRYPT);
-        $user->selfieId = $userDto->selfieId;
+        $user->selfie = $selfie;
 
         return $user;
     }
