@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OrangePortfolio\Core\Application\Auth;
 
+use Exception;
 use Lcobucci\JWT\Configuration;
 use Lcobucci\JWT\Validation\Constraint\SignedWith;
 use OrangePortfolio\Core\Domain\Entity\User;
@@ -28,11 +29,12 @@ class Authentication
 
     public function authenticate(string $inputToken): int
     {
-        if (trim($inputToken) === '') {
+        try {
+            $token = $this->config->parser()->parse($inputToken);
+        } catch (Exception) {
             throw InvalidToken::throw();
         }
 
-        $token = $this->config->parser()->parse($inputToken);
         $this->config->setValidationConstraints(new SignedWith($this->config->signer(), $this->config->signingKey()));
 
         if (! $this->config->validator()->validate($token, ...$this->config->validationConstraints())) {
