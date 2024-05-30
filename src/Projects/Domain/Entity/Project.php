@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use OrangePortfolio\Core\Domain\Entity\Image;
+use OrangePortfolio\Core\Domain\Entity\User;
 use OrangePortfolio\Projects\Domain\Dto\CreateProjectDto;
 use OrangePortfolio\Projects\Domain\Dto\UpdateProjectDto;
 
@@ -29,13 +31,13 @@ class Project
     #[ORM\Column(name: 'link', type: Types::STRING)]
     private string $link;
 
-    #[ORM\Column(name: 'image_id', type: Types::INTEGER)]
-    #[ORM\JoinColumn(name: 'images', referencedColumnName: 'id')]
-    private int $imageId;
+    #[ORM\OneToOne(targetEntity: Image::class, cascade: ['persist'])]
+    #[ORM\JoinColumn(name: 'image_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    private Image $image;
 
-    #[ORM\Column(name: 'user_id', type: Types::INTEGER)]
-    #[ORM\JoinColumn(name: 'users', referencedColumnName: 'id')]
-    private int $userId;
+    #[ORM\OneToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id')]
+    private User $user;
 
     #[ORM\OneToMany(
         targetEntity: ProjectTag::class,
@@ -63,20 +65,23 @@ class Project
             'description' => $this->description,
             'tags' => $tags,
             'link' => $this->link,
-            'image_id' => $this->imageId,
-            'user_id' => $this->userId,
+            'image' => $this->image->jsonSerialize(),
+            'user' => $this->user->jsonSerialize(),
         ];
     }
 
-    public static function create(CreateProjectDto $projectDto): self
-    {
+    public static function create(
+        CreateProjectDto $projectDto,
+        User $user,
+        Image $image
+    ): self {
         $project = new self();
 
         $project->title = $projectDto->title;
         $project->description = $projectDto->description;
         $project->link = $projectDto->link;
-        $project->imageId = $projectDto->imageId;
-        $project->userId = $projectDto->userId;
+        $project->image = $image;
+        $project->user = $user;
 
         return $project;
     }
@@ -90,11 +95,13 @@ class Project
         }
     }
 
-    public function update(UpdateProjectDto $projectDto): void
-    {
+    public function update(
+        UpdateProjectDto $projectDto,
+        Image $image
+    ): void {
         $this->title = $projectDto->title;
         $this->description = $projectDto->description;
         $this->link = $projectDto->link;
-        $this->imageId = $projectDto->imageId;
+        $this->image = $image;
     }
 }

@@ -33,7 +33,7 @@ class GetProjectsAction
 
         /** @var ProjectRepositoryInterface $projectRepository */
         $projectRepository = $this->container->get(ProjectRepositoryInterface::class);
-        $projects = $projectRepository->getAllByTags($getProjectsDto->tags);
+        $projects = $projectRepository->getAllByTags($getProjectsDto);
 
         $body = $response->getBody();
         $responseBody = array_map(fn (Project $project) => $project->jsonSerialize(), $projects);

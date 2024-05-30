@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace OrangePortfolio\Projects\Infrastructure\Persistence\DoctrineOrm;
 
 use Doctrine\ORM\EntityManager;
+use OrangePortfolio\Projects\Domain\Dto\GetProjectsDto;
 use OrangePortfolio\Projects\Domain\Entity\Project;
 use OrangePortfolio\Projects\Domain\Exception\ProjectNotFoundException;
 use OrangePortfolio\Projects\Domain\Repository\ProjectRepositoryInterface;
@@ -38,9 +39,9 @@ class ProjectRepositoryDoctrineOrm implements ProjectRepositoryInterface
         $this->entityManager->flush();
     }
 
-    public function getAllByTags(?string $tags): array
+    public function getAllByTags(GetProjectsDto $getProjectsDto): array
     {
-        if (! $tags) {
+        if (! $getProjectsDto->tags) {
             return $this->entityManager->getRepository(Project::class)->findAll();
         }
 
@@ -51,7 +52,7 @@ class ProjectRepositoryDoctrineOrm implements ProjectRepositoryInterface
             ->innerJoin('project.projectTag', 'projectTag')
             ->innerJoin('projectTag.tag', 'tag')
             ->where('tag.id IN (:TAGS)')
-            ->setParameter('TAGS', $tags);
+            ->setParameter('TAGS', $getProjectsDto->tags);
 
         return (array) $queryBuilder->getQuery()->getResult();
     }

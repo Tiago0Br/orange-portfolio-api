@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace OrangePortfolio\Projects\Domain\Service;
 
+use OrangePortfolio\Core\Domain\Repository\ImageRepositoryInterface;
 use OrangePortfolio\Projects\Domain\Dto\UpdateProjectDto;
 use OrangePortfolio\Projects\Domain\Entity\Project;
 use OrangePortfolio\Projects\Domain\Repository\ProjectRepositoryInterface;
@@ -13,12 +14,14 @@ class UpdateProject
 {
     public function __construct(
         private readonly ProjectRepositoryInterface $projectRepository,
-        private readonly TagRepositoryInterface $tagRepository
+        private readonly TagRepositoryInterface $tagRepository,
+        private readonly ImageRepositoryInterface $imageRepository
     ) {
     }
 
     public function update(UpdateProjectDto $updateProjectDto): Project
     {
+        $image = $this->imageRepository->getById($updateProjectDto->imageId);
         $project = $this->projectRepository->getById($updateProjectDto->id);
         $tags = [];
 
@@ -27,7 +30,7 @@ class UpdateProject
         }
 
         $project->addTags($tags);
-        $project->update($updateProjectDto);
+        $project->update($updateProjectDto, $image);
         $this->projectRepository->store($project);
 
         return $project;
