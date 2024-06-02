@@ -15,10 +15,8 @@ use Slim\App;
 /** @var App $app */
 $container = $app->getContainer();
 
-$app->post('/users/{user_id}/projects', new CreateProjectAction($container))
-    ->add(new CheckToken($container));
-
 $app->group('/projects', function (App $app) use ($container) {
+    $app->post('', new CreateProjectAction($container));
     $app->get('', new GetProjectsAction($container));
 
     $app->group('/{id}', function (App $app) use ($container) {

@@ -7,7 +7,6 @@ namespace OrangePortfolio\Projects\Application\Rest;
 use JsonException;
 use OrangePortfolio\Projects\Domain\Dto\GetProjectsDto;
 use OrangePortfolio\Projects\Domain\Entity\Project;
-use OrangePortfolio\Projects\Domain\Entity\ProjectTag;
 use OrangePortfolio\Projects\Domain\Repository\ProjectRepositoryInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
