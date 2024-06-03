@@ -12,7 +12,8 @@
     ],
     "autoload": {
         "psr-4": {
-            "OrangePortfolio\\": "src/"
+            "OrangePortfolio\\": "src/",
+            "OrangePortfolio\\Tests\\": "tests/"
         }
     },
     "require": {
@@ -31,6 +32,7 @@
     },
     "scripts": {
         "dev": "php -S localhost:8888 -t ./public",
-        "migrate": "phinx migrate"
+        "migrate": "phinx migrate",
+        "test": "vendor/bin/phpunit"
     }
 }
