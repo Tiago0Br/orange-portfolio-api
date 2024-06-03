@@ -11,6 +11,7 @@ class GetProjectsDto
     private function __construct(
         public readonly ?string $tags,
         public readonly int $onlyMyProjects,
+        public readonly int $userId
     ) {
     }
 
@@ -28,9 +29,15 @@ class GetProjectsDto
             required: false
         );
 
+        ValidateParams::validateInteger(
+            params: $params,
+            fields: ['user_id']
+        );
+
         return new self(
             tags: $params['tags'] ?? null,
-            onlyMyProjects: $params['only_my_projects'] ? (int) $params['only_my_projects'] : 0
+            onlyMyProjects: $params['only_my_projects'] ? (int) $params['only_my_projects'] : 0,
+            userId: (int) $params['user_id']
         );
     }
 }

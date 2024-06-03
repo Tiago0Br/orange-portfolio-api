@@ -50,9 +50,16 @@ class ProjectRepositoryDoctrineOrm implements ProjectRepositoryInterface
             ->select('project')
             ->from(Project::class, 'project')
             ->innerJoin('project.projectTag', 'projectTag')
+            ->innerJoin('project.user', 'user')
             ->innerJoin('projectTag.tag', 'tag')
             ->where('tag.id IN (:TAGS)')
             ->setParameter('TAGS', $getProjectsDto->tags);
+
+        $condition = $getProjectsDto->onlyMyProjects === 1 ? 'user.id = :USER_ID' : 'user.id != :USER_ID';
+
+        $queryBuilder
+            ->andWhere($condition)
+            ->setParameter('USER_ID', $getProjectsDto->userId);
 
         return (array) $queryBuilder->getQuery()->getResult();
     }
