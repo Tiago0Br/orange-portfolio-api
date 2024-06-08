@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace OrangePortfolio\Projects\Application\Rest;
 
 use JsonException;
-use OrangePortfolio\Projects\Domain\Dto\GetProjectByIdDto;
+use OrangePortfolio\Projects\Domain\Dto\DeleteProjectDto;
 use OrangePortfolio\Projects\Domain\Service\DeleteProject;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -27,11 +27,13 @@ class DeleteProjectAction
      */
     public function __invoke(Request $request, Response $response, array $args): Response
     {
-        $deleteProjectDto = GetProjectByIdDto::fromArray($args);
+        $deleteProjectDto = DeleteProjectDto::fromArray(
+            array_merge($args, $request->getQueryParams())
+        );
 
         /** @var DeleteProject $deleteProject */
         $deleteProject = $this->container->get(DeleteProject::class);
-        $deleteProject->delete($deleteProjectDto->projectId);
+        $deleteProject->delete($deleteProjectDto);
 
         $body = $response->getBody();
         $responseBody = [

@@ -52,6 +52,11 @@ class Project
         $this->projectTag = new ArrayCollection();
     }
 
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
     public function jsonSerialize(): array
     {
         $tags = array_map(

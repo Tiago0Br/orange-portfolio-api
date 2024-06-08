@@ -7,6 +7,7 @@ namespace OrangePortfolio\Projects\Domain\Service;
 use OrangePortfolio\Core\Domain\Repository\ImageRepositoryInterface;
 use OrangePortfolio\Projects\Domain\Dto\UpdateProjectDto;
 use OrangePortfolio\Projects\Domain\Entity\Project;
+use OrangePortfolio\Projects\Domain\Exception\AnotherUsersProject;
 use OrangePortfolio\Projects\Domain\Repository\ProjectRepositoryInterface;
 use OrangePortfolio\Projects\Domain\Repository\TagRepositoryInterface;
 
@@ -21,8 +22,12 @@ class UpdateProject
 
     public function update(UpdateProjectDto $updateProjectDto): Project
     {
-        $image = $this->imageRepository->getById($updateProjectDto->imageId);
         $project = $this->projectRepository->getById($updateProjectDto->id);
+        if ($project->getUser()->getId() !== $updateProjectDto->userId) {
+            throw AnotherUsersProject::fromId($updateProjectDto->userId);
+        }
+
+        $image = $this->imageRepository->getById($updateProjectDto->imageId);
         $tags = [];
 
         foreach ($updateProjectDto->tags as $tagId) {

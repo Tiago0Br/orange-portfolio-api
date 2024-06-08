@@ -28,7 +28,11 @@ class UpdateProjectAction
     public function __invoke(Request $request, Response $response, array $args): Response
     {
         $updateProjectDto = UpdateProjectDto::fromArray(
-            array_merge($args, (array) $request->getParsedBody())
+            array_merge(
+                $args,
+                (array) $request->getParsedBody(),
+                $request->getQueryParams()
+            )
         );
 
         /** @var UpdateProject $updateProject */
